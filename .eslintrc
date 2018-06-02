@@ -353,6 +353,9 @@
                 },
                 "let" : {
                     "after" : true
+                },
+                "do" : {
+                    "after" : true
                 }
             }
         }],
@@ -408,9 +411,6 @@
         "no-plusplus": "off",
         // disallow use of certain syntax in code
         "no-restricted-syntax": ["error",
-            "ClassBody",
-            "ClassDeclaration",
-            "ClassExpression",
             "ExperimentalRestProperty",
             "ExperimentalSpreadProperty",
             "WithStatement",
@@ -452,7 +452,7 @@
         "one-var": ["warn", {
             "var" : "always",
             "let" : "always",
-            "const" : "always"
+            "const" : "never"
         }],
         "one-var-declaration-per-line": ["warn",
             "initializations"

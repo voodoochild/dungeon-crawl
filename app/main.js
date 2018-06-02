@@ -1,5 +1,14 @@
 import m from "mithril";
 
+import Map from "./models/map";
+import "./lib/game";
+
 m.mount(document.body, {
-    view : () => m("h1", "Dungeon Crawl")
+    oninit : (vnode) => {
+        vnode.state.map = new Map();
+    },
+
+    view : (vnode) => {
+        return vnode.state.map.render();
+    }
 });
