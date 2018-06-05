@@ -1,4 +1,8 @@
-const game = {};
+const game = {
+    map     : null,
+    player  : null,
+    enemies : []
+};
 
 window.game = game;
 

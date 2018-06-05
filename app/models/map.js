@@ -1,4 +1,4 @@
-import m from "mithril";
+import { directions } from "../lib/constants";
 
 // Based on https://medium.freecodecamp.org/how-to-make-your-own-procedural-dungeon-map-generator-using-the-random-walk-algorithm-e0085c8aa9a
 
@@ -15,35 +15,29 @@ function create2DArray(v, size) {
 }
 
 export default class Map {
-    constructor(opts = {}) {
-        // TODO: Better way of setting defaults?
-        opts.dimensions = opts.dimensions || 20;
-        opts.maxTunnels = opts.maxTunnels || 50;
-        opts.maxLength  = opts.maxLength  || 8;
+    constructor({ dimensions = 20, maxTunnels = 50, maxLength = 8 } = {}) {
+        this.size = dimensions;
+        this.spawn = null;
 
-        this.map = this.__generate(opts);
+        this._generate({ dimensions, maxTunnels, maxLength });
     }
 
     /* eslint max-statements: ["warn", 20] */
-    __generate({ dimensions, maxTunnels, maxLength }) {
-        const directions = [
-            [ -1,  0 ],  // Up
-            [  1,  0 ],  // Down
-            [  0, -1 ],  // Left
-            [  0,  1 ]   // Right
-        ];
+    _generate({ dimensions, maxTunnels, maxLength }) {
+        const dir = Object.values(directions);
 
         let currentRow    = Math.floor(Math.random() * dimensions),
             currentColumn = Math.floor(Math.random() * dimensions),
-            map           = create2DArray(1, dimensions),
             lastDirection = [],
             tunnelLength  = 0,
             randomDirection,
             randomLength;
 
+        this.map = create2DArray(1, dimensions);
+
         while(maxTunnels) {
             do {
-                randomDirection = directions[Math.floor(Math.random() * directions.length)];
+                randomDirection = dir[Math.floor(Math.random() * dir.length)];
             } while(
                 (
                     randomDirection[0] === -lastDirection[0] &&
@@ -67,7 +61,11 @@ export default class Map {
                 ) {
                     break;
                 } else {
-                    map[currentRow][currentColumn] = 0;
+                    if(!this.spawn) {
+                        this.spawn = [ currentRow, currentColumn ];
+                    }
+
+                    this.map[currentRow][currentColumn] = 0;
                     currentRow += randomDirection[0];
                     currentColumn += randomDirection[1];
                     tunnelLength++;
@@ -79,20 +77,26 @@ export default class Map {
                 maxTunnels--;
             }
         }
-
-        return map;
     }
 
-    render() {
-        return m(".map", this.map.map((row) =>
-            m(".row", row.map((v) =>
-                m(".cell", {
-                    class : [
-                        "cell",
-                        v ? null : "room"
-                    ].join(" ")
-                }, v)
-            ))
-        ));
+    randomLocation() {
+        // choose a random row until one is found with open cols
+        // choose a random col until one is found which is open
+
+        let x, y;
+
+        do {
+            x = Math.floor(Math.random() * this.size);
+        } while(
+            !this.map[x].some((row) => !row)
+        );
+
+        do {
+            y = Math.floor(Math.random() * this.size);
+        } while(
+            this.map[x][y]
+        );
+
+        return [ x, y ];
     }
 }

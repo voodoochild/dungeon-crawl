@@ -12,10 +12,25 @@ body {
 }
 
 .cell {
-    height: 1em;
-    width: 1em;
+    height: 2em;
+    width: 2em;
+
+    text-align: center;
+    line-height: 2em;
 }
 
 .room {
     background-color: slateblue;
+}
+
+.player {
+    background-color: lightgreen;
+}
+
+.enemy {
+    background-color: darkred;
+}
+
+.ruhroh {
+    background-color: red;
 }
